@@ -14,17 +14,20 @@ function handle(req, res) {
     res.setHeader("Access-Control-Allow-Methods", "*");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type,XFILENAME,XFILECATEGORY,XFILESIZE")
     getRequestBody(req).then(function (data) {
+        console.log('data',data);
         if(req.method === 'OPTIONS') {
             return res.end();
         }
         if (req.url === '/task/delete') {
             const list = mockData.find((item => item.url === '/task/list')).data;
-            const taskId = data.taskId;
-    
-            const index = list.findIndex(function (item) {return item.taskId === taskId});
+            const taskId = data.id;
+    console.log('ist',list);
+            const index = list.findIndex(item => {console.log('item',item); return item.id === taskId});
+            console.log('oo',index);
             if (index >= 0) {
                 list.splice(index, 1);
             }
+            console.log('sec',list);
     
             fs.writeFileSync(mockPath, 'module.exports=' + JSON.stringify(mockData));
         }
@@ -41,8 +44,8 @@ function handle(req, res) {
 
         if(req.url === '/task/update') {
             const list = mockData.find((item => item.url === '/task/list')).data;
-            const taskId = data.taskId;
-            const index = list.findIndex(function (item) {return item.taskId === taskId});
+            const taskId = data.id;
+            const index = list.findIndex(item => item.id === taskId);
             if(index >= 0) {
                 list.splice(index, 1, data);
             }
@@ -66,6 +69,7 @@ function getRequestBody(req: http.IncomingMessage) {
         let message = '';
         req.on('data', (chunk) => {
             message += (chunk || '').toString();
+            console.log('mess',message);
         })
 
         req.on('end', (data) => {
